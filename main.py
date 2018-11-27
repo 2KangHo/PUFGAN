@@ -22,14 +22,14 @@ parser.add_argument('--dataroot', required=True, help='path to dataset')
 parser.add_argument('--workers', type=int,
                     help='number of data loading workers', default=16)
 parser.add_argument('--batchSize', type=int,
-                    default=128, help='input batch size')
+                    default=256, help='input batch size')
 parser.add_argument('--imageSize', type=int, default=64,
                     help='the height / width of the input image to network')
 parser.add_argument('--nz', type=int, default=500,
                     help='size of the latent z vector')
 parser.add_argument('--ngf', type=int, default=64)
 parser.add_argument('--ndf', type=int, default=64)
-parser.add_argument('--niter', type=int, default=25,
+parser.add_argument('--niter', type=int, default=100,
                     help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.0002,
                     help='learning rate, default=0.0002')
