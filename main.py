@@ -22,10 +22,10 @@ parser.add_argument('--dataroot', required=True, help='path to dataset')
 parser.add_argument('--workers', type=int,
                     help='number of data loading workers', default=16)
 parser.add_argument('--batchSize', type=int,
-                    default=1, help='input batch size')
+                    default=128, help='input batch size')
 parser.add_argument('--imageSize', type=int, default=64,
                     help='the height / width of the input image to network')
-parser.add_argument('--nz', type=int, default=100,
+parser.add_argument('--nz', type=int, default=500,
                     help='size of the latent z vector')
 parser.add_argument('--ngf', type=int, default=64)
 parser.add_argument('--ndf', type=int, default=64)
@@ -76,7 +76,7 @@ nc = 3
 
 
 print('===> Loading datasets')
-dataset = DatasetFromFolder(opt.dataroot)
+dataset = DatasetFromFolder(opt.dataroot, opt.imageSize)
 assert dataset
 dataloader = torch.utils.data.DataLoader(dataset, batch_size=opt.batchSize,
                                          shuffle=True, num_workers=int(opt.workers))
@@ -113,11 +113,11 @@ for epoch in range(opt.niter):
         ###########################
         # train with real
         netD.zero_grad()
-        real_cpu = data[0].to(device)
-        batch_size = real_cpu.size(0)
+        real = data.to(device)
+        batch_size = real.size(0)
         label = torch.full((batch_size,), real_label, device=device)
 
-        output = netD(real_cpu)
+        output = netD(real)
         errD_real = criterion(output, label)
         errD_real.backward()
         D_x = output.mean().item()
@@ -144,11 +144,11 @@ for epoch in range(opt.niter):
         D_G_z2 = output.mean().item()
         optimizerG.step()
 
-        print('[%d/%d][%d/%d] Loss_D: %.4f Loss_G: %.4f D(x): %.4f D(G(z)): %.4f / %.4f'
-              % (epoch, opt.niter, i, len(dataloader),
-                 errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
         if i % 100 == 0:
-            vutils.save_image(real_cpu,
+            print('[%d/%d][%d/%d] Loss_D: %.4f Loss_G: %.4f D(x): %.4f D(G(z)): %.4f / %.4f'
+                  % (epoch, opt.niter, i, len(dataloader),
+                     errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
+            vutils.save_image(real,
                               '%s/real_samples.png' % opt.outf,
                               normalize=True)
             fake = netG(fixed_noise)
