@@ -1,3 +1,2 @@
 # PUFGAN
-GAN for generating nanocrack PUF
-DCGAN
+DCGAN for generating nanocrack PUF
