@@ -18,18 +18,18 @@ from networks import define_G, define_D, print_network
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--dataroot', required=True, help='path to dataset')
+parser.add_argument('--dataroot', default='data', help='path to dataset')
 parser.add_argument('--workers', type=int,
                     help='number of data loading workers', default=16)
 parser.add_argument('--batchSize', type=int,
-                    default=128, help='input batch size')
+                    default=32, help='input batch size')
 parser.add_argument('--imageSize', type=int, default=64,
                     help='the height / width of the input image to network')
-parser.add_argument('--nz', type=int, default=100,
+parser.add_argument('--nz', type=int, default=256,
                     help='size of the latent z vector')
 parser.add_argument('--ngf', type=int, default=64)
 parser.add_argument('--ndf', type=int, default=64)
-parser.add_argument('--niter', type=int, default=300,
+parser.add_argument('--niter', type=int, default=500,
                     help='number of epochs to train for')
 parser.add_argument('--lr', type=float, default=0.0002,
                     help='learning rate, default=0.0002')
@@ -51,6 +51,9 @@ print(opt)
 
 try:
     os.makedirs(opt.outf)
+    os.system('mkdir -p result/grid')
+    os.system('mkdir -p result/single_0')
+    os.system('mkdir -p result/single_16')
 except OSError:
     pass
 
@@ -144,19 +147,30 @@ for epoch in range(opt.niter):
         D_G_z2 = output.mean().item()
         optimizerG.step()
 
-        if i % 100 == 0:
-            print('[%d/%d][%d/%d] Loss_D: %.4f Loss_G: %.4f D(x): %.4f D(G(z)): %.4f / %.4f'
-                  % (epoch, opt.niter, i, len(dataloader),
-                     errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
+        print('[%d/%d][%d/%d] Loss_D: %.4f Loss_G: %.4f D(x): %.4f D(G(z)): %.4f / %.4f'
+              % (epoch, opt.niter, i, len(dataloader), errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
+
+        if i % 50 == 0:
             vutils.save_image(real,
-                              '%s/real_samples.png' % opt.outf,
+                              '%s/grid/real_samples.png' % opt.outf,
                               normalize=True)
             fake = netG(fixed_noise)
             vutils.save_image(fake.detach(),
-                              '%s/fake_samples_epoch_%03d.png' % (
+                              '%s/grid/fake_samples_epoch_%03d.png' % (
+                                  opt.outf, epoch),
+                              normalize=True)
+            vutils.save_image(fake.detach()[0],
+                              '%s/single/fake_samples_epoch_%03d_0.png' % (
+                                  opt.outf, epoch),
+                              normalize=True)
+            vutils.save_image(fake.detach()[16],
+                              '%s/single/fake_samples_epoch_%03d_16.png' % (
                                   opt.outf, epoch),
                               normalize=True)
 
     # do checkpointing
-    torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' % (opt.outf, epoch))
-    torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' % (opt.outf, epoch))
+    if epoch % 20 == 0:
+        torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' %
+                   (opt.outf, epoch))
+        torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' %
+                   (opt.outf, epoch))
