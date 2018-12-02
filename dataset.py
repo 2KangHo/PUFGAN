@@ -14,8 +14,8 @@ class DatasetFromFolder(data.Dataset):
         self.image_filenames = [x for x in listdir(
             self.photo_path) if is_image_file(x)]
 
-        transform_list = [transforms.Resize(imageSize),
-                          transforms.CenterCrop(imageSize),
+        transform_list = [transforms.Grayscale(num_output_channels=1),
+                          transforms.Resize(imageSize),
                           transforms.ToTensor(),
                           transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)), ]
 
