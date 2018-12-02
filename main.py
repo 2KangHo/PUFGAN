@@ -54,6 +54,7 @@ try:
     os.system('mkdir -p result/grid')
     os.system('mkdir -p result/single_0')
     os.system('mkdir -p result/single_16')
+    os.system('mkdir -p result/model')
 except OSError:
     pass
 
@@ -170,7 +171,7 @@ for epoch in range(opt.niter):
 
     # do checkpointing
     if epoch % 20 == 0:
-        torch.save(netG.state_dict(), '%s/netG_epoch_%d.pth' %
+        torch.save(netG.state_dict(), '%s/model/netG_epoch_%d.pth' %
                    (opt.outf, epoch))
-        torch.save(netD.state_dict(), '%s/netD_epoch_%d.pth' %
+        torch.save(netD.state_dict(), '%s/model/netD_epoch_%d.pth' %
                    (opt.outf, epoch))
