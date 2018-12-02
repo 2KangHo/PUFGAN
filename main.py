@@ -160,11 +160,11 @@ for epoch in range(opt.niter):
                                   opt.outf, epoch),
                               normalize=True)
             vutils.save_image(fake.detach()[0],
-                              '%s/single/fake_samples_epoch_%03d_0.png' % (
+                              '%s/single_0/fake_samples_epoch_%03d_0.png' % (
                                   opt.outf, epoch),
                               normalize=True)
             vutils.save_image(fake.detach()[16],
-                              '%s/single/fake_samples_epoch_%03d_16.png' % (
+                              '%s/single_16/fake_samples_epoch_%03d_16.png' % (
                                   opt.outf, epoch),
                               normalize=True)
 
