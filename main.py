@@ -22,7 +22,7 @@ parser.add_argument('--dataroot', default='data', help='path to dataset')
 parser.add_argument('--workers', type=int,
                     help='number of data loading workers', default=16)
 parser.add_argument('--batchSize', type=int,
-                    default=32, help='input batch size')
+                    default=64, help='input batch size')
 parser.add_argument('--imageSize', type=int, default=64,
                     help='the height / width of the input image to network')
 parser.add_argument('--nz', type=int, default=256,
@@ -31,8 +31,8 @@ parser.add_argument('--ngf', type=int, default=64)
 parser.add_argument('--ndf', type=int, default=64)
 parser.add_argument('--niter', type=int, default=500,
                     help='number of epochs to train for')
-parser.add_argument('--lr', type=float, default=0.0002,
-                    help='learning rate, default=0.0002')
+parser.add_argument('--lr', type=float, default=0.0005,
+                    help='learning rate, default=0.0005')
 parser.add_argument('--beta1', type=float, default=0.5,
                     help='beta1 for adam. default=0.5')
 parser.add_argument('--cuda', action='store_true', help='enables cuda')
@@ -53,7 +53,7 @@ try:
     os.makedirs(opt.outf)
     os.system('mkdir -p result/grid')
     os.system('mkdir -p result/single_0')
-    os.system('mkdir -p result/single_16')
+    os.system('mkdir -p result/single_32')
     os.system('mkdir -p result/model')
 except OSError:
     pass
@@ -164,8 +164,8 @@ for epoch in range(opt.niter):
                               '%s/single_0/fake_samples_epoch_%03d_0.png' % (
                                   opt.outf, epoch),
                               normalize=True)
-            vutils.save_image(fake.detach()[16],
-                              '%s/single_16/fake_samples_epoch_%03d_16.png' % (
+            vutils.save_image(fake.detach()[32],
+                              '%s/single_32/fake_samples_epoch_%03d_32.png' % (
                                   opt.outf, epoch),
                               normalize=True)
 
